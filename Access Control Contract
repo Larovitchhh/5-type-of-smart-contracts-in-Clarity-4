@@ -1,0 +1,19 @@
+(define-constant ERR-NOT-AUTHORIZED (err u100))
+(define-data-var admin principal tx-sender)
+(define-map allowlist principal bool)
+
+(define-public (add-allowed (user principal))
+    (begin
+        (if (is-eq tx-sender (var-get admin))
+            (begin
+                (map-set allowlist user true)
+                (ok true)
+            )
+            ERR-NOT-AUTHORIZED
+        )
+    )
+)
+
+(define-read-only (is-allowed (user principal))
+    (default-to false (map-get? allowlist user))
+)
