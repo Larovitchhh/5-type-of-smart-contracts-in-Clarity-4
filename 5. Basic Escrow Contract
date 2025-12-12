@@ -1,0 +1,32 @@
+(define-data-var buyer principal 'none)
+(define-data-var seller principal 'none)
+(define-data-var amount uint u0)
+(define-data-var released bool false)
+
+(define-public (init (b principal) (s principal) (amt uint))
+    (begin
+        (var-set buyer b)
+        (var-set seller s)
+        (var-set amount amt)
+        (ok true)
+    )
+)
+
+(define-public (deposit)
+    (begin
+        (asserts! (is-eq tx-sender (var-get buyer)) (err u100))
+        (stx-transfer? (var-get amount) tx-sender (as-contract))
+    )
+)
+
+(define-public (release)
+    (begin
+        (asserts! (is-eq tx-sender (var-get buyer)) (err u101))
+        (stx-transfer? (var-get amount) (as-contract) (var-get seller))
+        (var-set released true)
+    )
+)
+
+(define-read-only (status)
+    (var-get released)
+)
