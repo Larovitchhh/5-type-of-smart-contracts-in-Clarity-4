@@ -1,0 +1,19 @@
+(define-ft simple-token)
+
+(define-data-var total-supply uint u0)
+
+(define-public (mint (amount uint))
+    (begin
+        (ft-mint? simple-token amount tx-sender)
+        (var-set total-supply (+ (var-get total-supply) amount))
+        (ok amount)
+    )
+)
+
+(define-public (transfer (amount uint) (recipient principal))
+    (ft-transfer? simple-token amount tx-sender recipient)
+)
+
+(define-read-only (supply)
+    (var-get total-supply)
+)
